@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="module">
+        import { reactive, ref, effect } from './reactivity.js';
+        import { h, mount, patch } from './render.js';
+
+        const App = {
+            data: reactive({
+                count: 0
+            }),
+            render() {
+                return h('div', null, [
+                    h('p', null, String(this.data.count)),
+                    h('button', { onClick: () => this.data.count++ }, 'Add'),
+                    h('button', { onClick: () => this.data.count-- }, 'Minus')
+                ]);
+            }
+        }
+
+        function mountApp(component, container) {
+            let isMounted = false;
+            let prevVdom;
+
+            effect(() => {
+                if (!isMounted) {
+                    prevVdom = component.render();
+                    mount(prevVdom, container);
+                    isMounted = true;
+                } else {
+                    const newVdom = component.render();
+                    patch(prevVdom, newVdom);
+                    prevVdom = newVdom;
+                }
+            });
+        }
+
+        mountApp(App, document.getElementById('app'));
+    </script>
+</body>
+
+</html>
