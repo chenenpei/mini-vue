@@ -35,7 +35,7 @@ export function reactive(target) {
             const oldValue = target[key];
             const result = Reflect.set(target, key, value, receiver);
 
-            if (oldValue != result) trigger(target, key);
+            if (oldValue !== value) trigger(target, key);
 
             return result;
         },
